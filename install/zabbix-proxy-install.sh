@@ -72,8 +72,8 @@ EOL
 msg_ok "Set up SNMP Trapper"
 
 msg_info "Setting up Zabbix Proxy with SNMP Trapper"
-sed -i "s/^SNMPTrapperFile=.*/SNMPTrapperFile=/var/log/snmptrap/snmptrap.log/" /etc/zabbix/zabbix_proxy.conf
-sed -i "s/^# StartSNMPTrapper=.*/StartSNMPTrapper=1/" /etc/zabbix/zabbix_proxy.conf
+sed -i "s|^SNMPTrapperFile=.*|SNMPTrapperFile=/var/log/snmptrap/snmptrap.log|" /etc/zabbix/zabbix_proxy.conf
+sed -i "s|^# StartSNMPTrapper=.*|StartSNMPTrapper=1|" /etc/zabbix/zabbix_proxy.conf
 msg_ok "Set up Zabbix Proxy with SNMP Trapper"
 
 msg_info "Starting Services"
