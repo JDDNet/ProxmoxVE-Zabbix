@@ -26,6 +26,8 @@ $STD dpkg -i /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
 $STD apt-get update
 $STD apt-get install -y zabbix-proxy-pgsql zabbix-sql-scripts
 $STD apt-get install -y zabbix-agent2 zabbix-agent2-plugin-postgresql
+sed -i "s|^Hostname=.*|# Hostname=|" /etc/zabbix/zabbix_proxy.conf
+sed -i "s|^# HostnameItem=.*|HostnameItem=system.hostname|" /etc/zabbix/zabbix_proxy.conf
 msg_ok "Installed Zabbix Proxy"
 
 msg_info "Setting up PostgreSQL"
@@ -50,6 +52,18 @@ echo -e "zabbix Database Password: \e[32m$DB_PASS\e[0m" >>~/zabbix.creds
 echo -e "zabbix Database Name: \e[32m$DB_NAME\e[0m" >>~/zabbix.creds
 msg_ok "Set up PostgreSQL"
 
+msg_info "Setting up TLS PSK"
+TLS_ID=$(hostname)
+TLS_PSK=$(openssl rand -hex 32)
+echo $TLS_PSK >>~/tls.psk
+sed -i "s/^# TLSConnect=.*/TLSConnect=psk/" /etc/zabbix/zabbix_proxy.conf
+sed -i "s/^# TLSAccept=.*/TLSAccept=psk/" /etc/zabbix/zabbix_proxy.conf
+sed -i "s/^# TLSPSKIdentity=.*/TLSPSKIdentity=$TLS_ID/" /etc/zabbix/zabbix_proxy.conf
+sed -i "s/^# TLSPSKFile=.*/TLSPSKFile=/root/tls.psk/" /etc/zabbix/zabbix_proxy.conf
+echo -e "zabbix TLS PSK Identity: \e[32m$TLS_ID\e[0m" >>~/zabbix.creds
+echo -e "zabbix TLS PSK: \e[32m$TLS_PSK\e[0m" >>~/zabbix.creds
+msg_ok "Set up TLS PSK"
+
 msg_info "Setting up SNMP Trapper"
 $STD apt-get install -y libnet-snmp-perl snmp snmptrapd
 $STD curl -o /usr/bin/zabbix_trap_receiver.pl https://git.zabbix.com/projects/ZBX/repos/zabbix/raw/misc/snmptrap/zabbix_trap_receiver.pl
@@ -58,7 +72,6 @@ $STD mkdir /var/log/snmptrap
 sed -i "s|^\$SNMPTrapperFile.*|\$SNMPTrapperFile = '\''\/var\/log\/snmptrap\/snmptrap.log'\'';|" /usr/bin/zabbix_trap_receiver.pl
 echo "authCommunity execute public" >> /etc/snmp/snmptrapd.conf
 echo "perl do "/usr/bin/zabbix_trap_receiver.pl";" >> /etc/snmp/snmptrapd.conf
-
 cat > /etc/logrotate.d/snmptrap <<EOL
 /var/log/snmptrap/snmptrap.log {
     weekly
