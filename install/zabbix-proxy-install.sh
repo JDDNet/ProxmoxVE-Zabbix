@@ -51,7 +51,7 @@ echo -e "zabbix Database Name: \e[32m$DB_NAME\e[0m" >>~/zabbix.creds
 msg_ok "Set up PostgreSQL"
 
 msg_info "Setting up SNMP Trapper"
-$STD apt-get install -y net-snmp-utils net-snmp-perl net-snmp
+$STD apt-get install -y libnet-snmp-perl snmp snmptrapd
 $STD curl -o /usr/bin/zabbix_trap_receiver.pl https://git.zabbix.com/projects/ZBX/repos/zabbix/raw/misc/snmptrap/zabbix_trap_receiver.pl
 $STD chmod +x /usr/bin/zabbix_trap_receiver.pl
 $STD mkdir /var/log/snmptrap

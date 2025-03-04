@@ -54,7 +54,7 @@ function update_script() {
     wget -q https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu24.04_all.deb
     $STD dpkg -i zabbix-release_latest_7.2+ubuntu24.04_all.deb
     $STD apt-get update
-    $STD apt-get install --only-upgrade zabbix-proxy-pgsql zabbix-sql-scripts zabbix-agent2 zabbix-agent2-plugin-postgresql postgresql net-snmp-utils net-snmp-perl net-snmp
+    $STD apt-get install --only-upgrade zabbix-proxy-pgsql zabbix-sql-scripts zabbix-agent2 zabbix-agent2-plugin-postgresql postgresql libnet-snmp-perl snmp snmptrapd
 
     msg_info "Starting ${APP} Services"
     systemctl start zabbix-agent2 zabbix-proxy snmptrapd
