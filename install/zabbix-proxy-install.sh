@@ -56,10 +56,10 @@ msg_info "Setting up TLS PSK"
 TLS_ID=$(hostname)
 TLS_PSK=$(openssl rand -hex 32)
 echo $TLS_PSK >>~/tls.psk
-sed -i "s/^# TLSConnect=.*/TLSConnect=psk/" /etc/zabbix/zabbix_proxy.conf
-sed -i "s/^# TLSAccept=.*/TLSAccept=psk/" /etc/zabbix/zabbix_proxy.conf
-sed -i "s/^# TLSPSKIdentity=.*/TLSPSKIdentity=$TLS_ID/" /etc/zabbix/zabbix_proxy.conf
-sed -i "s/^# TLSPSKFile=.*/TLSPSKFile=/root/tls.psk/" /etc/zabbix/zabbix_proxy.conf
+sed -i "s|^# TLSConnect=.*|TLSConnect=psk|" /etc/zabbix/zabbix_proxy.conf
+sed -i "s|^# TLSAccept=.*|TLSAccept=psk|" /etc/zabbix/zabbix_proxy.conf
+sed -i "s|^# TLSPSKIdentity=.*|TLSPSKIdentity=$TLS_ID|" /etc/zabbix/zabbix_proxy.conf
+sed -i "s|^# TLSPSKFile=.*|TLSPSKFile=/root/tls.psk|" /etc/zabbix/zabbix_proxy.conf
 echo -e "zabbix TLS PSK Identity: \e[32m$TLS_ID\e[0m" >>~/zabbix.creds
 echo -e "zabbix TLS PSK: \e[32m$TLS_PSK\e[0m" >>~/zabbix.creds
 msg_ok "Set up TLS PSK"
@@ -98,7 +98,7 @@ motd_ssh
 customize
 
 msg_info "Cleaning up"
-rm -rf /tmp/zabbix-release_latest+debian12_all.deb
+rm -rf /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
 $STD apt-get -y autoremove
 $STD apt-get -y autoclean
 msg_ok "Cleaned"
