@@ -3,7 +3,7 @@
 # Copyright (c) 2021-2025 community-scripts ORG
 # Author: JDDNet
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: [SOURCE_URL]
+# Source: https://www.zabbix.com/
 
 # Import Functions und Setup
 source /dev/stdin <<< "$FUNCTIONS_FILE_PATH"
@@ -16,16 +16,13 @@ update_os
 
 # Installing Dependencies with the 3 core dependencies (curl;sudo;mc)
 msg_info "Installing Dependencies"
-$STD apt-get install -y \
-  curl \
-  sudo \
-  mc \
+$STD apt-get install -y curl sudo mc 
 msg_ok "Installed Dependencies"
 
 msg_info "Installing Zabbix Proxy"
 cd /tmp
-wget -q https://repo.zabbix.com/zabbix/7.2/release/debian/pool/main/z/zabbix-release/zabbix-release_latest+debian12_all.deb
-$STD dpkg -i /tmp/zabbix-release_latest+debian12_all.deb
+wget -q https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu24.04_all.deb
+$STD dpkg -i /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
 $STD apt-get update
 $STD apt-get install -y zabbix-proxy-pgsql zabbix-sql-scripts
 $STD apt-get install -y zabbix-agent2 zabbix-agent2-plugin-postgresql
@@ -58,9 +55,10 @@ $STD apt-get install -y net-snmp-utils net-snmp-perl net-snmp
 $STD curl -o /usr/bin/zabbix_trap_receiver.pl https://git.zabbix.com/projects/ZBX/repos/zabbix/raw/misc/snmptrap/zabbix_trap_receiver.pl
 $STD chmod +x /usr/bin/zabbix_trap_receiver.pl
 $STD mkdir /var/log/snmptrap
-sed -i "s|^\$SNMPTrapperFile.*|\$SNMPTrapperFile = '/var/log/snmptrap/snmptrap.log';/" /usr/bin/zabbix_trap_receiver.pl
-sed -i "s/^authCommunity.*/authCommunity execute public/" /etc/snmp/snmptrapd.conf
-sed -i "s/^perl.*/perl do "/usr/bin/zabbix_trap_receiver.pl";/" /etc/snmp/snmptrapd.conf
+sed -i 's|^\$SNMPTrapperFile.*|\$SNMPTrapperFile = '\''\/var\/log\/snmptrap\/snmptrap.log'\'';|' /usr/bin/zabbix_trap_receiver.pl
+echo "authCommunity execute public" >> /etc/snmp/snmptrapd.conf
+echo "perl do "/usr/bin/zabbix_trap_receiver.pl";" >> /etc/snmp/snmptrapd.conf
+
 cat > /etc/logrotate.d/snmptrap <<EOL
 /var/log/snmptrap/snmptrap.log {
     weekly

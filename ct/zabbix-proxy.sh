@@ -2,7 +2,7 @@
 #source <(curl -s https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/build.func)
 source <(curl -s https://raw.githubusercontent.com/JDDNet/ProxmoxVE-Zabbix/refs/heads/Zabbix-Proxy/misc/build.func)
 # Copyright (c) 2021-2025 tteck
-# Author: tteck (tteckster)
+# Author: JDDNet
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
 # Source: https://www.zabbix.com/
 
@@ -11,8 +11,8 @@ var_tags="monitoring"
 var_cpu="2"
 var_ram="8192"
 var_disk="16"
-var_os="debian"
-var_version="12"
+var_os="ubuntu"
+var_version="24.04"
 var_unprivileged="1"
 
 header_info "$APP"
@@ -45,14 +45,14 @@ function update_script() {
     DB_USER=$(grep 'zabbix Database User' ~/zabbix.creds | awk '{print $4}')
     DB_PASS=$(grep 'zabbix Database Password' ~/zabbix.creds | awk '{print $4}')
     DB_NAME=$(grep 'zabbix Database Name' ~/zabbix.creds | awk '{print $4}')
-    fi
     $STD sudo -u postgres pg_dump -U $DB_USER -d $DB_NAME -W $DB_PASS -F tar -f /opt/zabbix-proxy-backup/zabbix-proxy-backup.sql.tar
+    fi
     msg_info "Backup of $APP LXC Complete"
 
     msg_info "Updating $APP LXC"
     cd /tmp
-    wget -q https://repo.zabbix.com/zabbix/7.2/release/debian/pool/main/z/zabbix-release/zabbix-release_latest+debian12_all.deb
-    $STD dpkg -i zabbix-release_latest+debian12_all.deb
+    wget -q https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu24.04_all.deb
+    $STD dpkg -i zabbix-release_latest_7.2+ubuntu24.04_all.deb
     $STD apt-get update
     $STD apt-get install --only-upgrade zabbix-proxy-pgsql zabbix-sql-scripts zabbix-agent2 zabbix-agent2-plugin-postgresql postgresql net-snmp-utils net-snmp-perl net-snmp
 
@@ -61,7 +61,7 @@ function update_script() {
     msg_ok "Started ${APP} Services"
 
     msg_info "Cleaning Up"
-    rm -rf /tmp/zabbix-release_latest+debian12_all.deb
+    rm -rf /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
     msg_ok "Cleaned"
     msg_ok "Updated Successfully"
     exit
