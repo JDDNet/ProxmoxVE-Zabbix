@@ -60,7 +60,7 @@ EOF
 header_info
 msg "Installing Tailscale..."
 pct exec "$CTID" -- bash -c '
-curl -fsSL https://tailscale.com/install.sh | sh
+curl -fsSL https://tailscale.com/install.sh | sh -s
 ' || exit
 TAGS=$(awk -F': ' '/^tags:/ {print $2}' /etc/pve/lxc/${CTID}.conf)
 TAGS="${TAGS:+$TAGS; }tailscale"
