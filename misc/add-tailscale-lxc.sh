@@ -60,12 +60,7 @@ EOF
 header_info
 msg "Installing Tailscale..."
 pct exec "$CTID" -- bash -c '
-ID=$(grep "^ID=" /etc/os-release | cut -d"=" -f2)
-VER=$(grep "^VERSION_CODENAME=" /etc/os-release | cut -d"=" -f2)
-wget -qO- https://pkgs.tailscale.com/stable/$ID/$VER.noarmor.gpg >/usr/share/keyrings/tailscale-archive-keyring.gpg
-echo "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/$ID $VER main" >/etc/apt/sources.list.d/tailscale.list
-apt-get update &>/dev/null
-apt-get install -y tailscale &>/dev/null
+curl -fsSL https://tailscale.com/install.sh
 ' || exit
 TAGS=$(awk -F': ' '/^tags:/ {print $2}' /etc/pve/lxc/${CTID}.conf)
 TAGS="${TAGS:+$TAGS; }tailscale"
