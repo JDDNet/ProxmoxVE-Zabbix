@@ -30,7 +30,7 @@ msg_ok "Installed Zabbix Proxy"
 
 msg_info "Setting up PostgreSQL"
 $STD apt-get install -y postgresql
-DB_NAME=zabbix-proxy-db
+DB_NAME=zabbix_proxydb
 DB_USER=zabbix
 DB_PASS=$(openssl rand -base64 18 | tr -dc 'a-zA-Z0-9' | cut -c1-13)
 $STD sudo -u postgres psql -c "CREATE ROLE $DB_USER WITH LOGIN PASSWORD '$DB_PASS';"
