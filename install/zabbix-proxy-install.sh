@@ -55,11 +55,10 @@ msg_ok "Set up PostgreSQL"
 msg_info "Setting up TLS PSK"
 TLS_ID=$(hostname)
 TLS_PSK=$(openssl rand -hex 32)
-echo $TLS_PSK >>~/tls.psk
+echo $TLS_PSK >>/etc/zabbix/tls.psk
 sed -i "s|^# TLSConnect=.*|TLSConnect=psk|" /etc/zabbix/zabbix_proxy.conf
-sed -i "s|^# TLSAccept=.*|TLSAccept=psk|" /etc/zabbix/zabbix_proxy.conf
 sed -i "s|^# TLSPSKIdentity=.*|TLSPSKIdentity=$TLS_ID|" /etc/zabbix/zabbix_proxy.conf
-sed -i "s|^# TLSPSKFile=.*|TLSPSKFile=/root/tls.psk|" /etc/zabbix/zabbix_proxy.conf
+sed -i "s|^# TLSPSKFile=.*|TLSPSKFile=/etc/zabbix/tls.psk|" /etc/zabbix/zabbix_proxy.conf
 echo -e "zabbix TLS PSK Identity: \e[32m$TLS_ID\e[0m" >>~/zabbix.creds
 echo -e "zabbix TLS PSK: \e[32m$TLS_PSK\e[0m" >>~/zabbix.creds
 msg_ok "Set up TLS PSK"
