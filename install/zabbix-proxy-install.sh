@@ -55,7 +55,7 @@ $STD apt-get install -y libnet-snmp-perl snmp snmptrapd
 $STD curl -o /usr/bin/zabbix_trap_receiver.pl https://git.zabbix.com/projects/ZBX/repos/zabbix/raw/misc/snmptrap/zabbix_trap_receiver.pl
 $STD chmod +x /usr/bin/zabbix_trap_receiver.pl
 $STD mkdir /var/log/snmptrap
-sed -i 's|^\$SNMPTrapperFile.*|\$SNMPTrapperFile = '\''\/var\/log\/snmptrap\/snmptrap.log'\'';|' /usr/bin/zabbix_trap_receiver.pl
+sed -i "s|^\$SNMPTrapperFile.*|\$SNMPTrapperFile = '\''\/var\/log\/snmptrap\/snmptrap.log'\'';|" /usr/bin/zabbix_trap_receiver.pl
 echo "authCommunity execute public" >> /etc/snmp/snmptrapd.conf
 echo "perl do "/usr/bin/zabbix_trap_receiver.pl";" >> /etc/snmp/snmptrapd.conf
 
