@@ -13,8 +13,9 @@ variables() {
   METHOD="default"                                  # sets the METHOD variable to "default", used for the API call.
   RANDOM_UUID="$(cat /proc/sys/kernel/random/uuid)" # generates a random UUID and sets it to the RANDOM_UUID variable.
 }
-
+# Production
 #source <(curl -s https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/api.func)
+# Staging
 source <(curl -s https://raw.githubusercontent.com/JDDNet/ProxmoxVE-Zabbix/refs/heads/Zabbix-Proxy/misc/api.func)
 
 # This function sets various color variables using ANSI escape codes for formatting text in the terminal.
@@ -70,7 +71,10 @@ catch_errors() {
 
 # This function is called when an error occurs. It receives the exit code, line number, and command that caused the error, and displays an error message.
 error_handler() {
-  source /dev/stdin <<<$(wget -qLO - https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/api.func)
+  # Production
+  #source /dev/stdin <<<$(wget -qLO - https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/api.func)
+  #Staging
+  source /dev/stdin <<<$(wget -qLO - https://raw.githubusercontent.com/JDDNet/ProxmoxVE-Zabbix/refs/heads/Zabbix-Proxy/misc/api.func)
   if [ -n "$SPINNER_PID" ] && ps -p $SPINNER_PID >/dev/null; then kill $SPINNER_PID >/dev/null; fi
   printf "\e[?25h"
   local exit_code="$?"
@@ -1083,9 +1087,15 @@ build_container() {
   TEMP_DIR=$(mktemp -d)
   pushd $TEMP_DIR >/dev/null
   if [ "$var_os" == "alpine" ]; then
-    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/alpine-install.func)"
+    # Production
+    #export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/alpine-install.func)"
+    # Staging
+    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/JDDNet/ProxmoxVE-Zabbix/refs/heads/Zabbix-Proxy/misc/alpine-install.func)"
   else
-    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/install.func)"
+    # Production
+    #export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/install.func)"
+    # Staging
+    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/JDDNet/ProxmoxVE-Zabbix/refs/heads/Zabbix-Proxy/misc/install.func)"
   fi
   export RANDOM_UUID="$RANDOM_UUID"
   export CACHER="$APT_CACHER"
@@ -1117,7 +1127,10 @@ build_container() {
     $PW
   "
   # This executes create_lxc.sh and creates the container and .conf file
-  bash -c "$(wget -qLO - https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/create_lxc.sh)" || exit $?
+  # Production
+  #bash -c "$(wget -qLO - https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/create_lxc.sh)" || exit $?
+  # Staging
+  bash -c "$(wget -qLO - https://raw.githubusercontent.com/JDDNet/ProxmoxVE-Zabbix/refs/heads/Zabbix-Proxy/ct/create_lxc.sh)" || exit $?
 
   LXC_CONFIG=/etc/pve/lxc/${CTID}.conf
   if [ "$CT_TYPE" == "0" ]; then
@@ -1179,7 +1192,10 @@ http://dl-cdn.alpinelinux.org/alpine/latest-stable/community
 EOF'
     pct exec "$CTID" -- ash -c "apk add bash >/dev/null"
   fi
-  lxc-attach -n "$CTID" -- bash -c "$(wget -qLO - https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/install/$var_install.sh)" || exit $?
+  # Production
+  #lxc-attach -n "$CTID" -- bash -c "$(wget -qLO - https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/install/$var_install.sh)" || exit $?
+  # Staging
+  lxc-attach -n "$CTID" -- bash -c "$(wget -qLO - https://raw.githubusercontent.com/JDDNet/ProxmoxVE-Zabbix/refs/heads/Zabbix-Proxy/install/$var_install.sh)" || exit $?
 
 }
 
