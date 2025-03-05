@@ -11,8 +11,8 @@ var_tags="monitoring"
 var_cpu="2"
 var_ram="8192"
 var_disk="16"
-var_os="ubuntu"
-var_version="24.04"
+var_os="debian"
+var_version="12"
 var_unprivileged="1"
 
 header_info "$APP"
@@ -51,8 +51,8 @@ function update_script() {
 
     msg_info "Updating $APP LXC"
     cd /tmp
-    wget -q https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu24.04_all.deb
-    $STD dpkg -i zabbix-release_latest_7.2+ubuntu24.04_all.deb
+    wget -q https://repo.zabbix.com/zabbix/7.2/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.2+debian12_all.deb
+    $STD dpkg -i zabbix-release_latest_7.2+debian12_all.deb
     $STD apt-get update
     $STD apt-get install --only-upgrade zabbix-proxy-pgsql zabbix-sql-scripts zabbix-agent2 zabbix-agent2-plugin-postgresql postgresql libnet-snmp-perl snmp snmptrapd
 
@@ -61,7 +61,7 @@ function update_script() {
     msg_ok "Started ${APP} Services"
 
     msg_info "Cleaning Up"
-    rm -rf /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
+    rm -rf /tmp/zabbix-release_latest_7.2+debian12_all.deb
     msg_ok "Cleaned"
     msg_ok "Updated Successfully"
     exit

@@ -21,8 +21,8 @@ msg_ok "Installed Dependencies"
 
 msg_info "Installing Zabbix Proxy"
 cd /tmp
-wget -q https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu24.04_all.deb
-$STD dpkg -i /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
+wget -q https://repo.zabbix.com/zabbix/7.2/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.2+debian12_all.deb
+$STD dpkg -i /tmp/zabbix-release_latest_7.2+debian12_all.deb
 $STD apt-get update
 $STD apt-get install -y zabbix-proxy-pgsql zabbix-sql-scripts
 $STD apt-get install -y zabbix-agent2 zabbix-agent2-plugin-postgresql
@@ -64,11 +64,11 @@ echo -e "zabbix TLS PSK: \e[32m$TLS_PSK\e[0m" >>~/zabbix.creds
 msg_ok "Set up TLS PSK"
 
 msg_info "Setting up SNMP Trapper"
-$STD apt-get install -y libnet-snmp-perl snmp snmptrapd
+$STD apt-get install -y libnet-snmp-perl snmp snmptrapd libsnmp-perl snmpd
 $STD curl -o /usr/bin/zabbix_trap_receiver.pl https://git.zabbix.com/projects/ZBX/repos/zabbix/raw/misc/snmptrap/zabbix_trap_receiver.pl
 $STD chmod +x /usr/bin/zabbix_trap_receiver.pl
 $STD mkdir /var/log/snmptrap
-sed -i "s|^\$SNMPTrapperFile.*|\$SNMPTrapperFile = '\''\/var\/log\/snmptrap\/snmptrap.log'\'';|" /usr/bin/zabbix_trap_receiver.pl
+sed -i "s|^\$SNMPTrapperFile.*|\$SNMPTrapperFile = '/var/log/snmptrap/snmptrap.log';|" /usr/bin/zabbix_trap_receiver.pl
 echo "authCommunity execute public" >> /etc/snmp/snmptrapd.conf
 echo "perl do "/usr/bin/zabbix_trap_receiver.pl";" >> /etc/snmp/snmptrapd.conf
 cat > /etc/logrotate.d/snmptrap <<EOL
@@ -97,7 +97,7 @@ motd_ssh
 customize
 
 msg_info "Cleaning up"
-rm -rf /tmp/zabbix-release_latest_7.2+ubuntu24.04_all.deb
+rm -rf /tmp/zabbix-release_latest_7.2+debian12_all.deb
 $STD apt-get -y autoremove
 $STD apt-get -y autoclean
 msg_ok "Cleaned"
